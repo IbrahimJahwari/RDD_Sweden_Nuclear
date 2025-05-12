@@ -5,7 +5,7 @@ The policy change broadened the focus of energy production from "renewable" to "
 We aim to study the statistical and economic impacts of this policy change utilizing RDD.
 
 Acknowledgements:
-This paper was prepared as part of the ECON32252 Econometrics and Data Science empricial project assignment, and was done alongside fellow studnets Aurick Angsana and Yousuf Rashid. I was directly responsible for all of the code written by me, as well as the Data, Methodology and Results sections of the written report. 
+This paper was prepared as part of the ECON32252 Econometrics and Data Science empricial project assignment, and was done alongside fellow studnets Aurick Angsana and Yousuf Rashid. I was directly responsible for writing all of the code (entailiing gathering, cleaning and processing the raw data files, and conducting all of the RDD analysis and vizualizations), as well as writing the 4-Data, 5-Methodology and 6-Results sections of the written report. 
 
 Reproducibility:
 
