@@ -1,4 +1,4 @@
-# RDD-EDS
+# RDD_Sweden_Nuclear
 Background Information:
 This is a Regression Discontinuity Design (RDD) study of Swedish nuclear energy production amid an energy policy change in June 2023.
 The policy change broadened the focus of energy production from "renewable" to "clean", thus allowing for more nuclear production.
