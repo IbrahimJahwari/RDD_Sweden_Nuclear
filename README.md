@@ -5,7 +5,7 @@ The policy change broadened the focus of energy production from "renewable" to "
 We aim to study the statistical and economic impacts of this policy change utilizing RDD.
 
 Acknowledgements:
-This paper was prepared as part of the ECON32252 Econometrics and Data Science empricial project assignment, and was done alongside fellow studnets Aurick Angsana and Yousuf Rashid. I was directly responsible for writing all of the code (entailiing gathering, cleaning and processing the raw data files, and conducting all of the RDD analysis and vizualizations), as well as writing the 4-Data, 5-Methodology and 6-Results sections of the written report. 
+This work was initially conducted as part of the ECON32252 Econometrics and Data Science empricial project assignment, and was done alongside fellow studnets Aurick Angsana and Yousuf Rashid. Since then, I have expanded the analysis to incorporate more advanced 
 
-Reproducibility:
-
+Data Sources & Reproducibility:
+The data used in this study are obtained from the European Network of Transmission System Operators for Electricity (ENTSO-E) Transparency Platform, (available at https://transparency.entsoe.eu/dashboard/show) which provides publicly accessible electricity market and generation data across Europe. The data is accessible to all and downloadable to those that log-in with a valid istitutional email address. If logged in, the "Extra_Sweden_RDD.R" file provides step by step instructions on downloading the datasets -- allowing for complete reproducibility of the analysis, and runs dataset merging, cleaning, and pre-processing. The "Sweden_RDD.R" file runs the core RDD analysis. 
