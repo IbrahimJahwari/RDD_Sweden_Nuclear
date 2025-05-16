@@ -1,4 +1,9 @@
 # RDD_Sweden_Nuclear
+File Directories:
+- The "Sweden_RDD.pdf" file is the final report (generated via the knitted r markdown file "Sweden_RDD.rmd")
+- The "Sweden_RDD.R" file runs contains the main RDD analysis conducted (as well as some data construction, EDA and visualizations)
+- The "Extra_Sweden_RDD.R" file contains supplemental R code that loads, cleans, merges, and pre-processes the orignial raw datasets.
+
 Background Information:
 This is a Regression Discontinuity Design (RDD) study of Swedish nuclear energy production amid an energy policy change in June 2023. The implemented policy broadened the focus of energy production from 'renewable' to 'clean', thus allowing for more nuclear production. I aim to study the statistical and economic impacts of this policy change utilizing RDD.
 
