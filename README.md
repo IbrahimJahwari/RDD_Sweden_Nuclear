@@ -1,6 +1,6 @@
-# RDD_Sweden_Nuclear
+# Nuclear Energy Policy Impact in Sweden: A Sharp RDD Approach
 Background Information:
-This is a Regression Discontinuity Design (RDD) study of Swedish nuclear energy production amid an energy policy change in June 2023. The implemented policy broadened the focus of energy production from 'renewable' to 'clean', thus allowing for more nuclear production. I aim to study the statistical and economic impacts of this policy change utilizing RDD.
+This is a Regression Discontinuity Design (RDD) study of Swedish nuclear energy production amid an energy policy change in June 2023. I aim to study the statistical and economic impacts of this policy change utilizing sharp RDD. See the written paper for further information. 
 
 File Directories:
 - The "Sweden_RDD.pdf" file is the written paper;
