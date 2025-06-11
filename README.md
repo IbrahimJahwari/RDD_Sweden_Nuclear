@@ -43,5 +43,6 @@ This project is released under the MIT License. See the `LICENSE` file for detai
 ## Author
 
 Ibrahim Al Jahwari
+
 Contact: ibrahim.aljahwari23.19@takatufscholars.om
 
