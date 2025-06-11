@@ -17,7 +17,7 @@ library(zoo)
     # Hence, there should be 4 datasets per year (one for each area) and so 12 in total. 
 
 # Loading the 12 datasets (adjust to your filepath and filenames as needed)
-setwd("~/Desktop/GitHub/RDD_Sweden_Nuclear/datas")
+setwd("~/filepath")
 sweden_SE1_22 <- read.csv("sweden_SE1_22.csv")
 sweden_SE2_22 <- read.csv("sweden_SE2_22.csv")
 sweden_SE3_22 <- read.csv("sweden_SE3_22.csv")
@@ -128,5 +128,5 @@ print(summary(Sweden_RDD))
 print(colnames(Sweden_RDD))
 
 # Export dataset
-write.csv(Sweden_RDD, file = "~/Desktop/GitHub/RDD_Sweden_Nuclear/data/Sweden.RDD.csv", row.names = FALSE) #adjust the file directory as needed
+write.csv(Sweden_RDD, file = "filepath/Sweden.RDD.csv", row.names = FALSE) #adjust the file directory as needed
   # This is the generated dataset that is all that is used in the "Sweden_RDD.R" file, which runs the main RDD analysis
