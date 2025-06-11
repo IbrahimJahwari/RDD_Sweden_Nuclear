@@ -39,3 +39,9 @@ This project uses R (version 4.0 or later) and the following R packages: `rdrobu
 ## License
 
 This project is released under the MIT License. See the `LICENSE` file for details.
+
+## Author
+
+Ibrahim Al Jahwari
+Contact: ibrahim.aljahwari23.19@takatufscholars.om
+
