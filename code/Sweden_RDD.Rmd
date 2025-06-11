@@ -104,7 +104,7 @@ Additional variables are constructed for use in robustness checks. These include
 The analysis focuses on five energy sources: nuclear, fossil, hydro, wind, and solar. These sources account for nearly all electricity generation in Sweden during the study period. Minor categories such as geothermal, marine, and waste are excluded due to incomplete reporting and negligible contribution to total production.
 
 ```{r load-data}
-sweden_rdd <- readr::read_csv("~/Desktop/GitHub/RDD_Sweden_Nuclear/data/Sweden.RDD.csv") %>%
+sweden_rdd <- readr::read_csv("~/filepath") %>%
   mutate(
     Date = as.Date(Date),
     Days = as.numeric(difftime(Date, as.Date("2022-01-01"), units = "days")),
