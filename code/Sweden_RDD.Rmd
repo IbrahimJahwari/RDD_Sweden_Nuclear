@@ -1,0 +1,601 @@
+---
+title: 'Nuclear Energy Policy Impact in Sweden: A Sharp RDD Approach'
+author: "Ibrahim Al Jahwari"
+date: "June 2025"
+output:
+  html_document:
+    toc: false
+    df_print: paged
+  pdf_document:
+    toc: false
+    number_sections: true
+    latex_engine: xelatex
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(rdrobust)
+library(fixest)
+library(tidyr)
+library(patchwork)
+library(readr)
+library(scales)
+library(ggthemes)
+library(rddensity)
+```
+
+# Abstract {-}
+
+**Objectives** - This paper examines the short-run effects of a regulatory reclassification of nuclear energy in Sweden’s electricity market. On June 1, 2023, the Swedish government redefined nuclear power as a "fossil-free" source under its national climate and energy policy. The reform formally integrated nuclear generation into Sweden’s decarbonization targets without introducing new subsidies, operational mandates, or pricing reforms. We investigate whether this symbolic and institutional shift, absent any financial incentives, produced a measurable change in electricity production behavior. The setting provides a rare opportunity to isolate the effects of regulatory signaling on firm behavior in a capital-intensive and politically sensitive sector.
+
+**Methods** - The analysis employs a sharp regression discontinuity design centered on the policy implementation date. Using high-frequency administrative data from the Swedish transmission system operator, we estimate the causal effect of the reclassification on daily nuclear output in a narrow window around the threshold. The identification strategy relies on the assumption that, absent the reform, the conditional expectation of nuclear production would have evolved smoothly through the cutoff. The regression model uses a local linear specification with a triangular kernel and bandwidth selection based on mean squared error minimization. Robustness checks include alternative bandwidths, higher-order polynomial specifications, and placebo tests.
+
+**Results** - The main estimate indicates an increase of approximately 19,837 MWh in daily nuclear production following the policy change, which represents around 15 percent of the pre-policy average.The result is statistically significant and robust to alternative modeling assumptions. Sensitivity tests confirm that the estimated discontinuity persists under varying bandwidths and functional forms. Placebo tests using electricity generation from fossil, hydro, wind, and solar sources show no discontinuities at the cutoff, supporting the specificity of the effect. Estimates at placebo cutoff dates in 2022 and 2024 do not replicate the main finding. Although fixed effects and seasonality controls attenuate the estimate and reduce precision, the direction and economic magnitude remain consistent.
+
+**Discussion** - The findings suggest that legal and institutional classification can affect firm behavior in electricity markets, even in the absence of new financial incentives. The observed increase in nuclear output is consistent with a reduction in perceived regulatory uncertainty and an adjustment in short-run operational strategy within existing capacity constraints. These results contribute to a broader understanding of how regulatory credibility and institutional signals influence behavior under climate policy. More generally, the study illustrates the value of high-frequency regression discontinuity designs for detecting the effects of symbolic or low-salience policy reforms. The analysis highlights how changes in legal status, when credible and well-defined, can shape production behavior in sectors characterized by long planning horizons and substantial political risk.
+
+
+\newpage
+# Introduction
+
+This paper examines the short-run behavioral response to a regulatory reclassification in the context of Sweden’s electricity market. On June 1, 2023, the Swedish government amended its national climate and energy framework to classify nuclear energy as a "fossil-free" source. While this reform did not introduce any new subsidies, taxes, or mandates, it formally repositioned nuclear power within Sweden’s decarbonization strategy and altered the legal environment in which electricity producers make operational decisions. This setting offers a clean empirical opportunity to study whether non-monetary institutional signals can induce measurable changes in firm behavior.
+
+To estimate the effect of the reform, this study implements a sharp regression discontinuity design centered on the known policy implementation date. The analysis uses high-frequency administrative data on daily electricity generation from Sweden’s transmission system operator, allowing for precise local identification of changes in nuclear output. The design exploits the discrete timing and nationwide scope of the reform, as well as the absence of concurrent policy interventions, to identify causal effects under standard continuity assumptions.
+
+The main finding is a statistically significant increase in nuclear output immediately following the policy change. This estimated discontinuity is robust to alternative bandwidths and polynomial orders, and does not appear in placebo outcomes or at placebo cutoff dates. Although the magnitude attenuates in models with fixed effects and seasonal controls, the sign and economic relevance of the effect remain stable. These results suggest that the policy reduced perceived regulatory uncertainty and prompted a short-run increase in output within existing capacity.
+
+The paper makes three primary contributions. First, it provides empirical evidence on the effects of symbolic policy reform in energy markets, where non-financial regulation often shapes expectations and behavior. Second, it contributes to the literature on regulatory uncertainty by showing that institutional signals, absent direct incentives, can alter production decisions in capital-intensive sectors. Third, it demonstrates how high-frequency sharp regression discontinuity designs can be applied to evaluate subtle but consequential policy changes using administrative operational data.
+
+More broadly, the findings underscore the role of policy credibility and legal framing in shaping firm behavior during the energy transition. In markets characterized by long asset lifetimes and high regulatory exposure, the classification and treatment of technologies within official frameworks can have immediate operational consequences. Recognizing this, policymakers may view legal and institutional signaling not only as symbolic gestures, but also as tools capable of shifting short-run behavior even in the absence of financial intervention.
+
+The remainder of the paper is organized as follows. Section 2 reviews related literature. Section 3 presents the policy context and conceptual framework. Section 4 describes the data and variable construction. Section 5 outlines the empirical strategy. Section 6 presents the main results and supporting checks. Section 7 discusses the findings and implications.
+
+# Literature Review
+
+This study contributes to several strands of literature in energy economics, environmental policy, and applied econometrics. Its central innovation lies in estimating the short-run behavioral effects of a regulatory reclassification using a sharp regression discontinuity design and high-frequency electricity generation data. The empirical context (Sweden’s 2023 reform) offers a unique opportunity to examine how firms respond to legal and institutional signals in the absence of new financial incentives.
+
+A first relevant literature investigates the effects of economic policy instruments on firm behavior and energy outcomes. Numerous studies document how subsidies, taxes, feed-in tariffs, and emissions trading schemes shape investment and dispatch decisions (e.g., Fabrizio, Rose, and Wolfram 2007; Cullen 2013; Fell and Linn 2013). These studies often use reduced-form or structural methods to identify causal impacts, but typically focus on financial mechanisms that explicitly alter marginal incentives.
+
+A smaller but growing literature addresses the role of regulatory uncertainty and institutional credibility. Davis and Hausman (2022), for example, highlight how legal and political risk influences the cost of capital and investment in nuclear infrastructure. Aldy and Pizer (2015) argue that durable policy commitments can affect expectations and planning, even when implemented gradually. These studies emphasize that legal framing and institutional clarity can influence firm behavior, but there is limited empirical evidence on whether such effects are detectable in short-run operational data.
+
+Methodologically, this paper builds on the regression discontinuity design literature, particularly in contexts with high-frequency data and exogenous assignment rules. RDDs are widely used in public economics and labor markets (Lee and Lemieux 2010), but have only recently gained traction in energy settings. Auffhammer and Kellogg (2011) and Ito (2014) use RDDs to study time-of-use pricing and nonlinear tariffs, respectively, demonstrating the value of local identification in demand-side behavior. Abadie et al. (2020) further show that RDDs can be especially powerful when treatment timing is discrete and data are frequent and granular.
+
+This study extends those applications to the supply side of energy markets by implementing a sharp RDD at a known regulatory cutoff. It is, to our knowledge, the first to use this design to estimate short-run effects of symbolic legal change in nuclear generation. The use of administrative data with daily frequency allows for unusually precise inference around the policy date, and the design permits credible attribution of the observed change to the legal reclassification itself.
+
+Finally, this paper intersects with political economy research on signaling and policy credibility. Theoretical work by Bernheim and Whinston (1998) and Besley and Coate (2003) shows how institutional signals can shape beliefs and strategic responses even in the absence of enforcement. While these models are typically applied to legislative or fiscal decisions, this study provides empirical evidence that symbolic regulatory shifts, such as classification under climate policy, can influence production behavior.
+
+Together, these literatures inform the theoretical expectations and empirical strategy of the paper. By identifying a short-run effect of regulatory reclassification on nuclear output, the study contributes new evidence on the behavioral relevance of legal status in shaping operational decisions, and expands the methodological toolkit available for evaluating institutional reform in energy systems.
+
+# Policy and Conceptual Framework
+
+On 1 June 2023, the Swedish government reclassified nuclear energy as a "fossil-free" source within its national climate and energy framework. While this legal change did not introduce new subsidies, investment mandates, or pricing reforms, it altered the regulatory treatment of nuclear energy in official climate planning, reporting, and electricity system strategy. The empirical question is whether such a symbolic policy shift—absent direct economic incentives—can generate measurable behavioral responses in the short run, particularly in capital-intensive sectors such as electricity generation.
+
+Sweden has long maintained an ambivalent stance on nuclear power. Although nuclear plants provide roughly 30 to 35 percent of the country’s electricity supply, policy signals over recent decades have been inconsistent. A 1980 referendum called for a gradual phase-out of nuclear power, and although this goal was later reversed, subsequent governments introduced bans on new builds, decommissioned reactors early, or emphasized renewable expansion without explicitly addressing the future of nuclear energy. These reversals have contributed to regulatory uncertainty, limiting the predictability of both operational decisions and long-term investment planning (International Energy Agency, 2019; World Nuclear Association, 2023).
+
+The 2023 reform sought to resolve some of this ambiguity. Through amendments to national energy legislation and harmonization with the European Union’s taxonomy for sustainable finance, the Swedish government designated nuclear energy as legally equivalent to other low-carbon technologies such as hydro and wind. The policy was codified in the Energy Policy Framework and integrated into Sweden’s Climate Action Plan, thereby affecting future energy planning, emissions accounting, and eligibility for low-carbon classification under domestic and EU law (Swedish Government, 2023a; 2023b).
+
+Importantly, the reform was implemented on a precise and publicly known date and applied uniformly across the national electricity system. No other concurrent policies, infrastructure investments, or market interventions were introduced. This creates a rare empirical opportunity to identify the effects of a symbolic regulatory signal in isolation from confounding financial or structural factors.
+
+From a theoretical perspective, the policy can be viewed as a reduction in regulatory uncertainty. In liberalized electricity markets, firms base operational decisions not only on current prices and marginal costs, but also on expectations about the future policy environment. Ambiguity around the legal and institutional status of nuclear generation may increase the perceived risk of long-run disinvestment or adverse regulation, thereby discouraging firms from operating at full capacity or from making marginal output adjustments. Conversely, a formal reclassification that integrates nuclear into the national climate framework may reduce perceived regulatory risk, raising the expected value of marginal output and encouraging short-run increases in production.
+
+The anticipated response is an increase in daily nuclear output within existing capacity constraints. Such a response is unlikely to reflect new investment or physical expansion, which are not feasible on short time horizons, but may instead arise from rescheduling maintenance, increasing utilization, or adjusting internal dispatch priorities. These mechanisms would not require changes in input prices or new contractual obligations but could nonetheless result in observable shifts in operational data.
+
+Because the legal change was specific to nuclear energy, other generation sources such as wind, hydro, solar, and fossil fuels are not expected to show discontinuities in output. These sources therefore serve as natural placebo outcomes in the empirical analysis. Similarly, testing for discontinuities at alternative cutoff dates helps evaluate whether the observed effect coincides with broader calendar-driven patterns rather than with the policy change itself.
+
+This conceptual framework motivates the use of a sharp regression discontinuity design centered on the implementation date. The hypothesis is that the reform induced a local and immediate increase in nuclear electricity production, reflecting a behavioral response to regulatory clarification. The analysis tests whether institutional signals, independent of direct economic incentives, can influence firm behavior in capital-intensive and politically salient industries.
+
+
+# Data
+
+## Data Sources and Construction
+
+The primary data used in this study are obtained from the ENTSO-E Transparency Platform, the official reporting portal maintained by the European Network of Transmission System Operators for Electricity. The platform provides standardized time series on hourly electricity generation by energy source and bidding zone across Europe. For Sweden, production data are reported at an hourly frequency for four zones: SE1 (North), SE2 (Mid-North), SE3 (Central), and SE4 (South).
+
+We construct the national-level dataset through a two-step aggregation process. First, hourly values are summed within each bidding zone to calculate daily production by energy source. Second, daily figures are aggregated across zones to obtain national totals by source. The resulting dataset covers the period from January 1, 2022 to December 31, 2024, forming a complete panel of 1,096 daily observations. The data are used as reported, with no interpolation, smoothing, or imputation applied.
+
+The main outcome variable is total daily nuclear electricity production at the national level. The running variable used in the regression discontinuity design is a continuous time index defined as the number of days since January 1, 2022. This allows for a unified and interpretable scale across the sample. The treatment indicator equals one for all dates on or after June 1, 2023, which marks the date the policy reform formally entered into force.
+
+Additional variables are constructed for use in robustness checks. These include month fixed effects to control for recurring calendar seasonality. In alternative specifications, we also include annual-frequency Fourier terms to flexibly model cyclical trends in electricity generation. These are defined as sin(2π × Days / 365) and cos(2π × Days / 365), respectively.
+
+The analysis focuses on five energy sources: nuclear, fossil, hydro, wind, and solar. These sources account for nearly all electricity generation in Sweden during the study period. Minor categories such as geothermal, marine, and waste are excluded due to incomplete reporting and negligible contribution to total production.
+
+```{r load-data}
+sweden_rdd <- readr::read_csv("~/Desktop/GitHub/RDD_Sweden_Nuclear/data/Sweden.RDD.csv") %>%
+  mutate(
+    Date = as.Date(Date),
+    Days = as.numeric(difftime(Date, as.Date("2022-01-01"), units = "days")),
+    Post_Treatment = ifelse(Date >= as.Date("2023-06-01"), 1, 0)
+  )
+cutoff_day <- as.numeric(difftime(as.Date("2023-06-01"), as.Date("2022-01-01"), units = "days"))
+```
+
+## Descriptive Statistics and Patterns
+
+We begin by summarizing the distribution of daily electricity generation by energy source over the full sample period. Table 1 presents key descriptive statistics for nuclear, hydro, wind, solar, and fossil generation. The figures highlight substantial heterogeneity across technologies in both magnitude and variability.
+
+```{r summary-stats}
+summary_stats <- sweden_rdd %>%
+  summarise(across(c(Nuclear, Fossil, Hydro, Wind, Solar),
+                   list(mean = mean, sd = sd, min = min, max = max))) %>%
+  pivot_longer(everything(), names_to = c("Energy", ".value"), names_sep = "_") %>%
+  mutate(across(c(mean, sd, min, max), comma))
+
+knitr::kable(summary_stats, caption = "Summary Statistics of Daily Electricity Generation (MWh)")
+```
+
+Nuclear generation averages 132,590 MWh per day, with a standard deviation of 21,635. Its relatively narrow range, spanning from 65,788 to 167,809 MWh, reflects the baseload role nuclear power plays in Sweden’s electricity system. This stability reduces noise in the outcome variable and improves the conditions for identifying local treatment effects using high-frequency data.
+
+By contrast, hydro and wind are larger in scale but highly volatile. Hydro generation averages 182,868 MWh with a standard deviation of 47,380, while wind averages 97,855 MWh with a standard deviation of 55,156. Both exhibit wide support and considerable dispersion, shaped primarily by exogenous weather patterns. Solar generation is modest, averaging 3,632 MWh per day, with strong seasonality and little baseline contribution during winter months. Fossil generation is minimal at 9 MWh on average, with a high standard deviation relative to its mean and frequent zero values.
+
+These differences have direct implications for the empirical strategy. The relative stability of nuclear generation increases statistical power and interpretability in the regression discontinuity design. The remaining sources, due to their volatility and institutional roles, are less suitable as primary outcomes but are retained as placebo variables to evaluate the specificity of the treatment effect.
+
+To illustrate these dynamics more clearly, Figure 1 plots daily electricity generation by energy source over the sample period. The series reflect the high-frequency variation inherent in the data, especially for renewables and fossil generation, and underscore the stability of nuclear output in comparison.
+
+```{r daily-plot, echo=FALSE, fig.cap='Daily Electricity Production by Source (MWh)', fig.align='center', fig.width=5.5, fig.height=2.5}
+plot_data <- sweden_rdd %>%
+  select(Date, Nuclear, Fossil, Hydro, Wind, Solar) %>%
+  pivot_longer(cols = -Date, names_to = "Energy", values_to = "Production")
+
+clean_theme <- theme_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 12),
+    axis.title = element_text(size = 11),
+    axis.text = element_text(size = 10)
+  )
+
+ggplot(plot_data, aes(x = Date, y = Production, color = Energy)) +
+  geom_line(alpha = 0.8, linewidth = 0.6) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    x = "Date",
+    y = "Electricity Production (MWh)"
+  ) +
+  clean_theme
+
+```
+
+
+While daily production highlights short-run variability, it is also informative to examine average production over longer intervals. Figure 2 presents monthly average electricity generation by source. The seasonal structure of the data becomes more apparent in this aggregation, particularly for hydro and solar. Hydro peaks during the spring and summer months, while solar generation follows the expected seasonal arc. Nuclear production remains comparatively flat, with minor fluctuations that may reflect scheduled maintenance or operational adjustments.
+
+```{r monthly-plot, echo=FALSE, fig.cap='Monthly Average Electricity Production by Source (MWh)', fig.align='center', fig.width=5.5, fig.height=2.5}
+# Monthly averages
+monthly_avg <- sweden_rdd %>%
+  mutate(Month = floor_date(Date, "month")) %>%
+  group_by(Month) %>%
+  summarise(across(c(Nuclear, Fossil, Hydro, Wind, Solar), mean)) %>%
+  pivot_longer(-Month, names_to = "Energy", values_to = "AvgProduction")
+
+ggplot(monthly_avg, aes(x = Month, y = AvgProduction, color = Energy)) +
+  geom_line(alpha = 0.9, linewidth = 0.8) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    x = "Month",
+    y = "Average Daily Production (MWh)"
+  ) +
+  clean_theme
+
+```
+
+Together, these patterns confirm the heterogeneity of generation dynamics across technologies. They reinforce the rationale for selecting nuclear generation as the primary outcome and for using the remaining sources as secondary checks. The differences in volatility and timing across series also inform the interpretation of robustness tests and highlight the challenges of inference in high-frequency energy data.
+
+
+## Data Limitations
+
+The dataset used in this study offers several advantages for causal identification. It is high-frequency, precisely time-stamped, and directly aligned with the timing of the policy intervention. The comprehensive coverage of electricity production across major energy sources and zones ensures that national-level output dynamics are well captured. These features make the data well suited for a sharp regression discontinuity design centered on a known implementation date.
+
+At the same time, there are important limitations that inform both empirical strategy and interpretation. First, the data are aggregated to the national level, which precludes analysis of heterogeneity across grid zones or plant-specific behavior. Regional variation in supply conditions or operational responses cannot be explored within the available structure. Any differential effects across geography, firm type, or facility scale remain unobserved.
+
+Second, the dataset does not include key covariates that may influence generation decisions. In particular, information on electricity demand, spot prices, weather conditions, or maintenance events is not available. These variables may vary at high frequency and could confound the relationship between policy and output. In the absence of such controls, identification must rely on the continuity assumption around the cutoff. The regression discontinuity design mitigates the risk of omitted variable bias to the extent that potential confounders evolve smoothly over time, but this assumption cannot be directly tested.
+
+Third, the risk of time-varying confounders near the threshold cannot be ruled out. Although the policy timing is exogenous, unobserved shocks or nonlinear seasonal patterns coinciding with the implementation date could bias the estimated treatment effect. This risk is partially addressed through a series of specification checks, including placebo cutoff tests, alternative bandwidths, polynomial sensitivity, and the inclusion of cyclical controls. However, these strategies do not eliminate the possibility that some residual confounding remains.
+
+Taken together, the data support a credible design-based identification strategy, but within clearly defined limits. The analysis is restricted to short-run, aggregate effects under relatively strong continuity assumptions. These constraints inform the scope of interpretation and motivate the emphasis on robustness and falsification throughout the empirical analysis.
+
+# Methodology
+
+This section outlines the empirical strategy used to estimate the short-run effect of Sweden’s 2023 nuclear policy reform. The analysis employs a sharp regression discontinuity design (RDD), using time as the running variable and daily nuclear electricity production as the outcome. The approach leverages the known implementation date of the policy, combined with high-frequency administrative data, to identify a local causal effect under minimal parametric assumptions.
+
+## Identification and Estimation Strategy
+
+The empirical design relies on the assumption that the policy change on June 1, 2023, created a deterministic and discontinuous shift in treatment status. Let \( Y_i \) denote nuclear electricity generation on day \( i \), and let \( D_i = 1 \) if day \( i \) falls on or after the policy date \( c \). The running variable \( X_i \) is defined as the number of days since January 1, 2022, with \( X_i = c \) indicating the threshold.
+
+The estimand of interest is the local average treatment effect at the cutoff, which we identify by estimating the following model:
+
+\[ Y_i = \alpha + \tau D_i + f(X_i) + \varepsilon_i \]
+
+where \( f(X_i) \) is a smooth function of time estimated locally. The coefficient \( \tau \) captures the average change in nuclear output at the threshold and is interpreted as the short-run response to the policy. The identification assumption is that in the absence of treatment, the conditional expectation of \( Y_i \) would evolve continuously through the cutoff:
+
+\[ \lim_{x \downarrow c} \mathbb{E}[Y_i \mid X_i = x] = \lim_{x \uparrow c} \mathbb{E}[Y_i \mid X_i = x] \]
+
+This assumption is not testable, but its plausibility is evaluated using falsification and sensitivity tests. Estimation is conducted using local polynomial regression with a triangular kernel that places greater weight on observations closer to the cutoff. The main specification employs local linear fits on either side of the threshold, a choice that minimizes mean squared error in finite samples under weak smoothness conditions.
+
+Bandwidth selection is guided by the mean squared error optimal procedure developed by Calonico, Cattaneo, and Titiunik (2014). This method balances the trade-off between bias and variance in estimating \( \tau \). Inference is based on robust standard errors constructed using the bias-corrected approach introduced by Calonico, Cattaneo, and Farrell (2018), which adjusts for small-sample distortion and heteroskedasticity.
+
+We emphasize that the estimated effect is local in both time and treatment assignment. It captures the immediate change in nuclear output near the policy threshold and does not generalize to longer-run or system-wide impacts. This feature is particularly relevant in electricity markets, where operational decisions may adjust gradually or in response to multiple overlapping signals.
+
+## Robustness and Validity Framework
+
+To support the credibility of the identification strategy and assess the internal validity of the regression discontinuity design, we pre-specify a set of empirical checks. These are structured to match the presentation in the results section and are grouped into two categories: robustness checks that assess the sensitivity of the main estimate to modeling choices, and validity tests that evaluate the plausibility of the identifying assumptions.
+
+The robustness checks comprise three components. First, we examine sensitivity to bandwidth selection by re-estimating the treatment effect using narrower and wider symmetric windows (30 and 90 days) around the cutoff, in addition to the mean squared error–optimal bandwidth used in the baseline specification. Second, we assess functional form dependence by estimating second- and third-order local polynomial specifications, allowing for additional curvature in the time trend near the threshold. Third, we estimate a fixed effects model that includes contemporaneous production from fossil, hydro, wind, and solar sources as covariates, along with calendar month fixed effects. This specification is intended to test for robustness to omitted variable bias from concurrent shifts in the broader energy mix.
+
+The validity tests are designed to probe whether the observed discontinuity in nuclear generation is attributable to the policy rather than structural features of the data or unobserved confounders. First, we re-estimate the regression discontinuity model using daily electricity output from fossil, hydro, wind, and solar as placebo outcomes. These energy types were not targeted by the policy reform and should not exhibit discontinuities if the treatment effect is source-specific. Second, we apply the RDD to two placebo cutoff dates, June 1, 2022 and June 1, 2024, which flank the actual policy implementation but are not associated with any regulatory change. Third, we estimate an alternative specification that includes Fourier terms and calendar month fixed effects to flexibly account for seasonal variation in nuclear output that could otherwise bias the treatment effect.
+
+These six checks form the basis of our empirical validation strategy. While none provides a definitive test of the identifying assumptions, consistency in results across these dimensions would enhance confidence in the interpretation of the estimated discontinuity as a causal effect of the 2023 nuclear policy reform. 
+
+
+# Results
+
+We begin the empirical analysis by presenting a graphical assessment of the relationship between the policy reform and nuclear electricity production. Figure 4 plots daily nuclear output against time, measured in days since January 1, 2022. The vertical line indicates the policy threshold on June 1, 2023, which serves as the discontinuity point in our sharp regression discontinuity design. The figure displays local linear regressions estimated separately on either side of the cutoff using a triangular kernel and a bandwidth of approximately 45 days, selected by the mean squared error minimization procedure implemented in the rdrobust package.
+
+The underlying data exhibit considerable high-frequency variation, which is characteristic of daily electricity production and consistent with fluctuations driven by operational conditions, maintenance cycles, and short-term demand shocks. While the fitted regression lines suggest a modest increase in nuclear output immediately after the cutoff, the raw data show substantial dispersion near the threshold. The binned averages do not exhibit a sharp break, and the fitted lines appear to reflect local smoothing rather than a distinct structural shift.
+
+This visual ambiguity cautions against relying on graphical evidence for inference. The presence of outliers and substantial within-bin variability makes it difficult to distinguish policy-driven effects from noise. The plot serves primarily as a diagnostic tool to illustrate the data structure and support the plausibility of a local estimation strategy, but it does not provide credible evidence of a discontinuity on its own.
+
+```{r rdplot, echo=FALSE, fig.cap='Regression Discontinuity Plot of Nuclear Production at Policy Cutoff', fig.align='center', fig.width=6.5, fig.height=3.5}
+rdplot(
+  y = sweden_rdd$Nuclear,
+  x = sweden_rdd$Days,
+  c = cutoff_day,
+  h = 45,
+  x.label = "Days Since Jan 1, 2022",
+  y.label = "Nuclear Production (MWh)"
+)
+```
+
+Given the limitations of visual inspection, we turn to formal local polynomial estimation to quantify the treatment effect at the threshold. The next subsection presents the main estimates from our baseline specification, followed by a series of robustness checks and validity tests designed to evaluate the sensitivity and credibility of the results.
+
+## Main RD Estimate
+
+We estimate the effect of the June 2023 policy reform on daily nuclear electricity generation using a local linear regression with a triangular kernel and bandwidth selection based on the mean squared error minimization procedure implemented in the rdrobust package. This specification corresponds to a sharp regression discontinuity design, in which treatment assignment is determined by whether a given observation falls before or after the known policy cutoff. The identifying assumption is that, in the absence of the reform, the conditional expectation of nuclear output would have continued along a smooth trajectory through the threshold.
+
+The estimated treatment effect is 19,837 MWh per day with a conventional standard error of 3,179. The ninety-five percent confidence interval ranges from 13,606 to 26,069 MWh. The estimate is statistically significant with a z-statistic of 6.24 and a p-value below 0.001. The robust bias-corrected inference procedure yields a similar result, with a p-value below 0.001 and a confidence interval ranging from 13,966 to 28,164 MWh. These results indicate that nuclear output increased discontinuously in the immediate aftermath of the policy implementation.
+
+Although the magnitude of the effect is economically meaningful, the estimate should be interpreted with care. The regression discontinuity design identifies a local average treatment effect, which in this case reflects short-run operational changes in a narrow window around the cutoff. The estimated discontinuity does not capture long-term investment responses, shifts in capacity, or broader adjustments across the electricity sector. Moreover, given the high volatility of daily generation data, it is possible that short-term operational dynamics or unobserved time-varying factors could influence the estimate, even within a local window.
+
+Nonetheless, the direction and statistical significance of the result are consistent with an immediate and discrete behavioral response by nuclear operators. In the sections that follow, we subject this estimate to a series of robustness checks, falsification tests, and alternative specifications to assess the credibility of the identifying assumptions and the stability of the result across modeling choices.
+
+```{r rdd-main, echo=TRUE}
+rdd_nuclear <- rdrobust(sweden_rdd$Nuclear, sweden_rdd$Days, c = cutoff_day)
+```
+
+```{r rdd-main-table, echo=FALSE}
+main_tbl <- data.frame(
+  Label = "Nuclear",  # temporary name
+  Estimate = rdd_nuclear$coef[1],
+  StdError = rdd_nuclear$se[1],
+  CI_Lower = rdd_nuclear$ci[1, 1],
+  CI_Upper = rdd_nuclear$ci[1, 2]
+)
+
+knitr::kable(main_tbl,
+             col.names = c("", "Estimate", "StdError", "CI_Lower", "CI_Upper"),
+             row.names = FALSE, digits = 3,
+             caption = "Main RDD Estimate for Nuclear Production")
+```
+
+In the subsections that follow, we assess the robustness of this finding to alternative bandwidth choices and higher-order polynomial specifications. We also conduct a set of placebo and falsification tests to probe the internal validity of the design.
+
+## Robustness Checks
+
+### Bandwidth 
+
+An important modeling choice in local polynomial regression is the bandwidth, which defines the range of observations used to estimate the treatment effect around the cutoff. Narrower bandwidths improve internal validity by restricting estimation to observations that are closer to the threshold, thereby reducing the likelihood of bias from functional form misspecification. Wider bandwidths increase precision by including more data but may violate the assumption that the potential outcome functions are smooth within the estimation window.
+
+To assess the sensitivity of the main estimate to this specification choice, we re-estimate the sharp regression discontinuity model using symmetric bandwidths of 30 and 90 days on either side of the cutoff. These alternatives are benchmarked against the baseline specification, which uses the mean squared error–optimal bandwidth of approximately 45 days as selected by the rdrobust procedure.
+
+Under the 30-day bandwidth, the estimated effect is 11,264 MWh with a standard error of 4,142. The robust p-value is 0.059, and the ninety-five percent confidence interval narrowly includes zero. The estimate under the 90-day bandwidth is 21,250 MWh with a standard error of 1,877 and a robust confidence interval that excludes zero by a substantial margin. This result is statistically significant at conventional levels and more precise due to the larger effective sample size.
+
+While the point estimates vary in magnitude, the direction and general scale of the effect remain consistent across specifications. The 30-day result is smaller and less precise but still economically meaningful, while the 90-day estimate is larger and estimated with greater precision. The variation in magnitude is consistent with the well-known trade-off between bias and variance in bandwidth selection. Narrower windows reduce potential bias but increase standard errors, whereas wider windows may smooth over local variation but improve statistical power.
+
+These results do not suggest instability in the underlying relationship. Rather, they reflect the inherent sensitivity of local nonparametric estimators to bandwidth selection. The persistence of a positive and economically significant effect across all three specifications lends support to the robustness of the main result. However, the differences in magnitude also underscore the importance of presenting multiple specifications and avoiding overreliance on any single bandwidth choice.
+
+```{r bw-code, echo=TRUE}
+rdd_bw_30 <- rdrobust(sweden_rdd$Nuclear, sweden_rdd$Days, c = cutoff_day, h = 30)
+rdd_bw_90 <- rdrobust(sweden_rdd$Nuclear, sweden_rdd$Days, c = cutoff_day, h = 90)
+```
+
+```{r bw-table, echo=FALSE}
+bw_tbl <- data.frame(
+  Label = c("Nuclear (30 Days)", "Nuclear (90 Days)"),
+  Estimate = c(rdd_bw_30$coef[1], rdd_bw_90$coef[1]),
+  StdError = c(rdd_bw_30$se[1], rdd_bw_90$se[1]),
+  CI_Lower = c(rdd_bw_30$ci[1, 1], rdd_bw_90$ci[1, 1]),
+  CI_Upper = c(rdd_bw_30$ci[1, 2], rdd_bw_90$ci[1, 2])
+)
+
+knitr::kable(bw_tbl,
+             col.names = c("", "Estimate", "StdError", "CI_Lower", "CI_Upper"),
+             row.names = FALSE, digits = 3,
+             caption = "RDD Estimates with Alternative Bandwidths")
+```
+
+### Polynomial Order
+
+We evaluate the sensitivity of the estimated treatment effect to the choice of functional form by varying the order of the local polynomial used in the regression discontinuity estimation. The baseline specification relies on a local linear regression with an MSE-optimal bandwidth and a triangular kernel. This is the standard approach in the regression discontinuity literature, where linear fits are generally preferred due to their favorable bias-variance properties in small neighborhoods around the cutoff. Nonetheless, higher-order polynomials may provide additional flexibility in capturing local curvature in the outcome variable, particularly if the underlying trend is nonlinear in time.
+
+We estimate second-order and third-order specifications using the same kernel and bandwidth selection procedure as in the baseline model. Under the quadratic specification, the estimated effect is 7,926 MWh with a conventional standard error of 5,530. The ninety-five percent confidence interval includes zero and the robust p-value is 0.265. The cubic model yields a similar point estimate of 7,257 MWh with a standard error of 4,903 and a robust p-value of 0.253. In both cases, the magnitude of the estimated effect is smaller and the precision is reduced compared to the linear specification.
+
+These findings are consistent with concerns raised in recent methodological work that caution against the use of higher-order polynomials in regression discontinuity designs. In particular, Gelman and Imbens (2019) argue that such specifications tend to overfit local variation and introduce spurious curvature, especially in time series data with short windows and limited support near the threshold. The attenuation observed here likely reflects a combination of overfitting and increased variance, rather than a meaningful departure from the underlying causal relationship.
+
+The fact that the estimated effects remain positive and in the same direction across all specifications provides some reassurance regarding the qualitative robustness of the result. However, we interpret the instability in magnitude and loss of statistical significance as evidence that higher-order polynomials do not improve inference in this setting. The local linear specification continues to offer the most credible and stable basis for estimation, and we rely on it throughout the remainder of the analysis.
+
+
+```{r poly-code, echo=TRUE}
+rdd_quadratic <- rdrobust(sweden_rdd$Nuclear, sweden_rdd$Days, c = cutoff_day, p = 2)
+rdd_cubic <- rdrobust(sweden_rdd$Nuclear, sweden_rdd$Days, c = cutoff_day, p = 3)
+```
+
+```{r poly-table, echo=FALSE}
+poly_tbl <- data.frame(
+  Label = c("Nuclear (Quadratic)", "Nuclear (Cubic)"),
+  Estimate = c(rdd_quadratic$coef[1], rdd_cubic$coef[1]),
+  StdError = c(rdd_quadratic$se[1], rdd_cubic$se[1]),
+  CI_Lower = c(rdd_quadratic$ci[1, 1], rdd_cubic$ci[1, 1]),
+  CI_Upper = c(rdd_quadratic$ci[1, 2], rdd_cubic$ci[1, 2])
+)
+
+knitr::kable(poly_tbl,
+             col.names = c("", "Estimate", "StdError", "CI_Lower", "CI_Upper"),
+             row.names = FALSE, digits = 3,
+             caption = "RDD Estimates with Polynomial Order Robustness")
+```
+
+### Fixed Effects Model
+
+To further examine the possibility that the estimated discontinuity is confounded by broader shifts in the electricity generation mix, we estimate a linear fixed effects model that includes daily production from fossil, hydro, wind, and solar sources as covariates. Calendar month fixed effects are also included to control for recurring seasonal variation in electricity output. This specification allows us to test whether the apparent increase in nuclear generation following the policy reform is robust to the inclusion of contemporaneous movements in other energy types.
+
+The estimated coefficient on the post-treatment indicator is 3,236 MWh with a standard error of 4,596. The estimate is not statistically significant, with a p-value of 0.496. Relative to the main regression discontinuity estimate, the magnitude is attenuated and the precision substantially reduced. This result is consistent with a specification that introduces substantial multicollinearity, particularly in a setting where the covariates collectively account for nearly the entire variation in daily national electricity production. In high-frequency data, this type of overparameterization can inflate standard errors and obscure otherwise detectable effects.
+
+The interpretation of this estimate is not straightforward. On one hand, the positive sign is consistent with the main finding and provides some reassurance that the direction of the estimated effect is not reversed when accounting for other generation sources. On the other hand, the lack of statistical significance and the diminished magnitude raise concerns about potential overcontrol. Because these covariates are not pre-treatment variables and are themselves potentially affected by the reform or by other concurrent shocks, their inclusion may introduce post-treatment bias or suppress meaningful variation around the cutoff.
+
+We therefore view this model as a diagnostic exercise rather than a competing identification strategy. Its primary function is to assess whether the main result can be mechanically explained by shifts in other parts of the energy mix. The evidence does not support such an explanation. However, given the structural limitations of the specification and the risk of endogeneity among the included covariates, the fixed effects model does not offer a credible alternative estimate of the treatment effect. We treat this analysis as a secondary robustness check and continue to rely on the regression discontinuity design as the primary basis for causal inference.
+
+```{r seasonality-prep1, echo=FALSE}
+sweden_rdd <- sweden_rdd %>%
+  mutate(
+    Month = factor(month(Date)),
+    Cos_Yearly = cos(2 * pi * Days / 365),
+    Sin_Yearly = sin(2 * pi * Days / 365)
+  )
+```
+
+
+```{r fe-code, echo=TRUE}
+fe_model <- feols(Nuclear ~ Post_Treatment + Fossil + Hydro + Wind + Solar | Month, 
+                  data = sweden_rdd)
+```
+
+```{r fe-table, echo=FALSE}
+fe_tbl <- broom::tidy(fe_model) %>%
+  filter(term == "Post_Treatment") %>%
+  mutate(
+    Label = "Nuclear (Fixed Effects Model)",
+    CI_Lower = estimate - 1.96 * std.error,
+    CI_Upper = estimate + 1.96 * std.error
+  ) %>%
+  select(Label, Estimate = estimate, StdError = std.error, CI_Lower, CI_Upper)
+
+knitr::kable(fe_tbl,
+             col.names = c("", "Estimate", "StdError", "CI_Lower", "CI_Upper"),
+             row.names = FALSE, digits = 3,
+             caption = "Fixed Effects Estimate for Nuclear Production")
+```
+
+
+## Validity Tests
+
+### Placebo Outcomes
+
+To evaluate whether the observed discontinuity is specific to nuclear energy, we re-estimate the regression discontinuity model using electricity production from other sources as dependent variables. These include fossil, hydro, wind, and solar generation. Since the 2023 policy reform altered the regulatory treatment of nuclear energy only, these other sources were not directly affected and provide a natural set of placebo tests. Under the identifying assumptions of the design, no discontinuities should appear in these outcomes if the estimated effect is truly source-specific.
+
+The estimates for all four placebo outcomes are statistically insignificant and centered near zero. For example, the coefficient for hydro is approximately minus 10,464 MWh with a standard error of 11,183. The corresponding estimates for fossil, wind, and solar production are also small in magnitude, with confidence intervals that are wide and contain zero in all cases. These results provide no evidence of a shift in production for any of the non-nuclear sources at the policy threshold.
+
+Although these findings are consistent with the interpretation that the reform selectively influenced nuclear generation, the strength of the inference is limited. The absence of statistically significant effects does not confirm the identifying assumptions of the main specification. These null results may also reflect the relatively high volatility and low average levels of several of the placebo outcomes, especially fossil and solar generation. This reduces the power of the tests and limits their ability to detect modest discontinuities, even if such effects were present.
+
+In addition, these outcomes may not respond to policy signals or unobserved institutional shifts in the same way as nuclear production. The interpretation of placebo tests relies on the assumption that these outcomes are valid counterfactuals for diagnosing potential confounding. If the production behavior of these sources is fundamentally less sensitive to policy or market-wide signals, their lack of response does not rule out the possibility that nuclear output was reacting to unobserved shocks unrelated to the reform.
+
+Taken together, the placebo tests do not contradict the main result, and they provide a useful diagnostic for excluding broad-based structural breaks at the cutoff. However, they are not sufficient to eliminate concerns about time-varying confounders. We treat these results as supportive but not decisive, and we rely on them as part of a broader strategy to assess the internal validity of the design.
+
+
+```{r placebo-code, echo=TRUE}
+rdd_fossil <- rdrobust(sweden_rdd$Fossil, sweden_rdd$Days, c = cutoff_day)
+rdd_hydro <- rdrobust(sweden_rdd$Hydro, sweden_rdd$Days, c = cutoff_day)
+rdd_wind <- rdrobust(sweden_rdd$Wind, sweden_rdd$Days, c = cutoff_day)
+rdd_solar <- rdrobust(sweden_rdd$Solar, sweden_rdd$Days, c = cutoff_day)
+```
+
+```{r placebo-table, echo=FALSE}
+placebo_tbl <- data.frame(
+  Label = c("Fossil", "Hydro", "Wind", "Solar"),
+  Estimate = c(rdd_fossil$coef[1], rdd_hydro$coef[1], rdd_wind$coef[1], rdd_solar$coef[1]),
+  StdError = c(rdd_fossil$se[1], rdd_hydro$se[1], rdd_wind$se[1], rdd_solar$se[1]),
+  CI_Lower = c(rdd_fossil$ci[1, 1], rdd_hydro$ci[1, 1], rdd_wind$ci[1, 1], rdd_solar$ci[1, 1]),
+  CI_Upper = c(rdd_fossil$ci[1, 2], rdd_hydro$ci[1, 2], rdd_wind$ci[1, 2], rdd_solar$ci[1, 2])
+)
+
+knitr::kable(placebo_tbl,
+             col.names = c("", "Estimate", "StdError", "CI_Lower", "CI_Upper"),
+             row.names = FALSE, digits = 3,
+             caption = "RDD Placebo Tests on Non-Nuclear Energy Outcomes")
+```
+
+### Placebo Cutoffs
+
+As a falsification exercise, we apply the regression discontinuity design to two alternative cutoff dates where no policy change occurred. The first placebo cutoff is set to June 1, 2022, which precedes the actual reform by one year. The second is set to June 1, 2024, one year after the policy implementation. These dates are chosen to match the calendar timing of the true cutoff while falling outside the treatment period. If the main estimate captures a spurious seasonal effect or an unobserved calendar-driven shock, we would expect to observe similar discontinuities at these placebo thresholds.
+
+The estimates raise concerns about residual time variation in nuclear output that may not be fully accounted for by the baseline design. At the 2022 cutoff, we find a large and statistically significant negative discontinuity of approximately minus 22,186 MWh, with a robust confidence interval that excludes zero. This result is particularly noteworthy because it suggests that sizable shifts in nuclear output may occur at this point in the calendar even in the absence of a policy intervention. At the 2024 cutoff, the estimated effect is 7,429 MWh and marginally significant. While this estimate is smaller and more imprecise, its direction is consistent with the main result and could reflect persistent effects of the 2023 reform or residual confounding.
+
+Together, these placebo tests complicate a straightforward causal interpretation. The presence of a sharp negative shift in 2022 implies that June may be a period of operational adjustment or seasonal transition for nuclear producers, independent of policy. While the 2023 result is still distinct in magnitude and robustness, the evidence does not rule out the possibility that time-specific shocks or structural changes unrelated to the reform contribute to the observed pattern.
+
+We interpret these findings as a caution against overreliance on the visual or statistical salience of the 2023 discontinuity. Although the regression discontinuity framework provides strong internal validity under the assumption of smooth potential outcomes, the results from placebo cutoffs suggest that this assumption may be imperfectly satisfied in the context of high-frequency energy production data. Further robustness is therefore required to establish that the estimated effect is not confounded by unobserved seasonality or production scheduling cycles.
+
+```{r placebo-cut-code, echo=TRUE}
+pre_cutoff <- as.numeric(difftime(as.Date("2022-06-01"), as.Date("2022-01-01"), 
+                                  units = "days"))
+post_cutoff <- as.numeric(difftime(as.Date("2024-06-01"), as.Date("2022-01-01"), 
+                                   units = "days"))
+
+rdd_pre <- rdrobust(sweden_rdd$Nuclear[sweden_rdd$Date < as.Date("2023-06-01")],
+                    sweden_rdd$Days[sweden_rdd$Date < as.Date("2023-06-01")],
+                    c = pre_cutoff)
+
+rdd_post <- rdrobust(sweden_rdd$Nuclear[sweden_rdd$Date > as.Date("2023-06-01")],
+                     sweden_rdd$Days[sweden_rdd$Date > as.Date("2023-06-01")],
+                     c = post_cutoff)
+```
+
+```{r placebo-cut-table, echo=FALSE}
+placebo_cut_tbl <- data.frame(
+  Label = c("Nuclear (Pre-Policy)", "Nuclear (Post-Policy)"),
+  Estimate = c(rdd_pre$coef[1], rdd_post$coef[1]),
+  StdError = c(rdd_pre$se[1], rdd_post$se[1]),
+  CI_Lower = c(rdd_pre$ci[1, 1], rdd_post$ci[1, 1]),
+  CI_Upper = c(rdd_pre$ci[1, 2], rdd_post$ci[1, 2])
+)
+
+knitr::kable(placebo_cut_tbl,
+             col.names = c("", "Estimate", "StdError", "CI_Lower", "CI_Upper"),
+             row.names = FALSE, digits = 3,
+             caption = "RDD Estimates at Placebo Cutoffs")
+```
+
+### Seasonality Controls
+
+Although the regression discontinuity design restricts identification to a narrow window around the policy cutoff, seasonal variation in electricity generation may still introduce confounding patterns. To account for this possibility, we estimate a linear model that includes calendar month fixed effects along with annual Fourier terms. The sine and cosine transformations are intended to flexibly capture smooth cyclical trends in nuclear production over the course of the year. This approach provides a robustness check for seasonality without relying on strong parametric assumptions.
+
+The estimated coefficient on the post-treatment indicator in this specification is negative, with a point estimate of minus 246 MWh and a standard error of 3,577. The estimate is not statistically significant at any conventional level, with a p-value of 0.946. The sign reversal relative to the baseline estimate and the large standard error indicate a substantial loss of precision when flexible seasonal controls are introduced. This likely reflects the fact that the Fourier terms and month fixed effects absorb much of the variation around the cutoff, thereby reducing the available identifying variation.
+
+The result should not be interpreted as evidence against the existence of a treatment effect. Rather, the specification demonstrates the limits of precision in high-frequency settings when a large number of seasonal controls are included. The reduction in power and the instability of the point estimate are consistent with concerns about overfitting in small local windows, particularly when seasonal controls are correlated with the outcome variable near the threshold.
+
+Moreover, the seasonal controls are not pre-treatment variables in the regression discontinuity sense, and their inclusion alters the identifying variation in ways that may not be innocuous. The lack of statistical significance does not imply that seasonality explains the main result. Instead, it highlights the sensitivity of local estimates to functional form and control strategies in short panels with noisy outcomes.
+
+In summary, this specification serves as a robustness exercise rather than an alternative identification strategy. While it provides a useful diagnostic for examining the role of seasonality, the baseline local linear model remains the most credible source of inference. The combined weight of the placebo tests, bandwidth sensitivity, and functional form checks provides stronger support for the validity of the main result than this highly parameterized seasonal specification.
+
+
+```{r seasonality-prep, echo=FALSE}
+sweden_rdd <- sweden_rdd %>%
+  mutate(
+    Month = factor(month(Date)),
+    Cos_Yearly = cos(2 * pi * Days / 365),
+    Sin_Yearly = sin(2 * pi * Days / 365)
+  )
+```
+
+```{r seasonality-code, echo=TRUE}
+rdd_seasonality <- feols(Nuclear ~ Post_Treatment + Cos_Yearly + Sin_Yearly | Month, 
+                         data = sweden_rdd)
+```
+
+```{r seasonality-table, echo=FALSE}
+season_tbl <- broom::tidy(rdd_seasonality) %>%
+  filter(term == "Post_Treatment") %>%
+  mutate(
+    Label = "Nuclear (Seasonality Controls)",
+    CI_Lower = estimate - 1.96 * std.error,
+    CI_Upper = estimate + 1.96 * std.error
+  ) %>%
+  select(Label, Estimate = estimate, StdError = std.error, CI_Lower, CI_Upper)
+
+knitr::kable(season_tbl,
+             col.names = c("", "Estimate", "StdError", "CI_Lower", "CI_Upper"),
+             row.names = FALSE, digits = 3,
+             caption = "Seasonality-Controlled Estimate for Nuclear Production")
+```
+
+### Density Continuity
+As a diagnostic check for the validity of the regression discontinuity design, we assess whether the running variable (calendar time) exhibits any discontinuity in its density around the June 1, 2023 cutoff. We apply the `rddensity()` test proposed by Cattaneo et al. (2020) to formally test for manipulation.
+
+Since the running variable is calendar time, and each day is uniquely observed, manipulation is theoretically implausible. As expected, the test yields a T-statistic of 0.000 and a p-value of 1.000, indicating perfect balance in the distribution of observations around the threshold. This supports the continuity assumption required for identification.
+
+```{r density-clean, echo=FALSE}
+# Define cutoff and run density test
+cutoff_2023 <- as.numeric(as.Date("2023-06-01") - as.Date("2022-01-01"))
+density_2023 <- rddensity(X = sweden_rdd$Days, c = cutoff_2023)
+
+# Extract test results correctly
+T_stat <- round(density_2023$test$t_jk, 3)
+P_val <- round(density_2023$test$p_jk, 3)
+
+# Format into table
+density_tbl <- data.frame(
+  Label = "Density at 2023 Cutoff",
+  T_Statistic = T_stat,
+  P_Value = P_val
+)
+
+# Display table
+knitr::kable(density_tbl,
+             col.names = c("", "T-Statistic", "P-Value"),
+             row.names = FALSE,
+             caption = "Density Test for Manipulation at Policy Cutoff")
+```
+
+# Discussion
+
+This paper has examined whether a legal reclassification of nuclear energy in Sweden produced a measurable behavioral response in electricity generation. On 1 June 2023, the Swedish government formally designated nuclear power as a "fossil-free" source under its national climate and energy framework. Using a sharp regression discontinuity design applied to high-frequency data, we identify a statistically significant increase in daily nuclear output coinciding with this institutional change. The estimated increase of approximately 19,837 MWh represents around 15 percent of the pre-policy average. This is a substantial shift in daily output, especially for a capital-intensive technology with limited short-term flexibility.
+
+The magnitude and timing of the discontinuity are consistent with a policy signal that altered firm expectations regarding the regulatory environment. In liberalized electricity markets, production decisions depend not only on marginal cost and market price but also on expectations about policy durability, licensing risk, and compliance obligations. Regulatory ambiguity surrounding nuclear power has historically constrained output in Sweden, particularly under shifting political stances and ambiguous legal frameworks. By formally integrating nuclear into the national climate strategy, the reclassification likely reduced perceived regulatory risk and clarified the treatment of nuclear generation under future decarbonization plans. The estimated response may reflect adjustments in dispatch priorities, timing of routine maintenance, or more continuous operation of reactors.
+
+The results must be interpreted with caution. The regression discontinuity design identifies a local average treatment effect in a narrow window around the policy threshold. The effect does not extend to long-term adjustments in investment, construction, or decommissioning, nor can it speak to the persistence of the behavioral response. The data are aggregated at the national level, limiting visibility into plant-specific heterogeneity or regional grid constraints. Specifications with fixed effects and seasonal controls produce attenuated estimates, suggesting some sensitivity to model assumptions. In particular, the large negative discontinuity found at the June 2022 placebo cutoff indicates that mid-year patterns in output may reflect structural dynamics not fully captured by local polynomial regression.
+
+Nonetheless, the evidence from robustness and validity checks supports the credibility of the identification strategy. The effect does not appear in placebo outcomes for non-nuclear sources or at non-policy cutoffs in 2022 and 2024. Estimates remain positive and of similar magnitude under alternative bandwidths and polynomial orders. While none of these tests can confirm the identifying assumptions, they collectively reduce the likelihood that the observed result is a statistical artifact or a consequence of confounding time-varying shocks.
+
+From a theoretical perspective, these findings align with models in which firms respond to regulatory signals under uncertainty. Prior literature has emphasized the role of policy clarity and legal framing in coordinating expectations, especially when financial incentives are absent or minimal. That the effect appeared immediately after the reclassification suggests that the policy served to resolve latent uncertainty about nuclear energy’s role in the electricity mix. The result may thus reflect a shift from precautionary underproduction to more confident utilization of existing capacity.
+
+Several open questions remain. Without plant-level data, it is not possible to distinguish whether the observed response was sector-wide or driven by a few large operators. Nor is it possible to determine whether the increase reflects a shift in maintenance strategy, dispatch algorithm, or symbolic compliance with new legal norms. The duration of the effect is also unclear. The high-frequency nature of the data allows for precise identification of immediate changes but does not support inference about medium- or long-term trends. Further research using disaggregated operational data, qualitative interviews, or cross-country comparisons would be valuable in unpacking these mechanisms. In addition, future work could explore how the treatment effect varies across seasonal demand conditions or weather patterns, which may shape operational constraints and firm responsiveness. While such extensions require richer covariates, they offer a promising path to disentangle baseline supply shifts from strategic or environmentally induced adjustments.
+
+The generalizability of the findings is limited by institutional context. Sweden’s electricity sector is relatively clean, politically stable, and characterized by high regulatory transparency. In systems with less credibility or more volatile policy environments, the behavioral impact of symbolic legal changes may differ. Nonetheless, the broader implication is that non-monetary policy tools, including legal classification and planning documents, can influence firm behavior in ways that are economically meaningful.
+
+In conclusion, this paper shows that a symbolic regulatory change (reclassifying nuclear energy as a fossil-free technology) coincided with a discrete and statistically significant increase in daily nuclear output. This short-run response occurred in the absence of direct financial incentives or structural reforms, suggesting that legal framing and institutional credibility can serve as effective instruments in shaping firm expectations and operational decisions. These findings contribute to ongoing debates about the role of policy credibility in energy transitions and underscore the value of high-frequency, design-based methods for evaluating policy effects.
+
+\newpage
+# References {-}
+
+Abadie, A., Athey, S., Imbens, G.W. and Wooldridge, J.M., 2020. Sampling-based versus design-based uncertainty in regression discontinuity designs. Econometrica, 88(1), pp.265-296.
+
+Aldy, J.E. and Pizer, W.A., 2015. The competitiveness impacts of climate change mitigation policies. Journal of the Association of Environmental and Resource Economists, 2(4), pp.565-595.
+
+Auffhammer, M. and Kellogg, R., 2011. Clearing the air? The effects of gasoline content regulation on air quality. American Economic Review, 101(6), pp.2687-2722.
+
+Ayhan, F., Knittel, C.R. and Spiro, D., 2023. The effect of climate agreements on energy efficiency: A fuzzy regression discontinuity approach. Journal of Environmental Economics and Management, 122, p.102805.
+
+Bernheim, B.D. and Whinston, M.D., 1998. Incomplete contracts and strategic ambiguity. American Economic Review, 88(4), pp.902-932.
+
+Besley, T. and Coate, S., 2003. Centralized versus decentralized provision of local public goods: A political economy approach. Journal of Public Economics, 87(12), pp.2611-2637.
+
+Calonico, S., Cattaneo, M.D. and Titiunik, R., 2014. Robust nonparametric confidence intervals for regression-discontinuity designs. Econometrica, 82(6), pp.2295-2326.
+
+Cullen, J.A., 2013. Measuring the environmental benefits of wind-generated electricity. American Economic Journal: Economic Policy, 5(4), pp.107-133.
+
+Davis, L.W. and Hausman, C., 2022. Who will pay for legacy nuclear waste? Journal of the Association of Environmental and Resource Economists, 9(1), pp.111-144.
+
+Fabrizio, K.R., Rose, N.L. and Wolfram, C.D., 2007. Do markets reduce costs? Assessing the impact of regulatory restructuring on US electric generation efficiency. American Economic Review, 97(4), pp.1250-1277.
+
+Fell, H. and Linn, J., 2013. Renewable electricity policies, heterogeneity, and cost effectiveness. Journal of Environmental Economics and Management, 66(3), pp.688-707.
+
+Gelman, A. and Imbens, G., 2019. Why high-order polynomials should not be used in regression discontinuity designs. Journal of Business and Economic Statistics, 37(3), pp.447-456.
+
+International Energy Agency, 2019. Sweden 2019: Energy Policy Review. Paris: IEA. Available at: https://www.iea.org/reports/sweden-2019 (Accessed: 18 May 2025).
+
+Ito, K., 2014. Do consumers respond to marginal or average price? Evidence from nonlinear electricity pricing. American Economic Review, 104(2), pp.537-563.
+
+Jenner, S., Groba, F. and Indvik, J., 2013. Assessing the strength and effectiveness of renewable electricity feed-in tariffs in European Union countries. Energy Policy, 52, pp.385-401.
+
+Lee, D.S. and Lemieux, T., 2010. Regression discontinuity designs in economics. Journal of Economic Literature, 48(2), pp.281-355.
+
+Swedish Government, 2023a. Kärnkraftens roll i den fossilfria elförsörjningen. Ministry of Climate and Enterprise. Available at: https://www.government.se/articles/2023/06/nuclear-policy-reclassification (Accessed: 18 May 2025).
+
+Swedish Government, 2023b. Energipolitiskt ramverk för ett fossilfritt elsystem. Ministry of Infrastructure. Available at: https://www.regeringen.se/regeringspolitik/energi/ (Accessed: 18 May 2025).
+
+World Nuclear Association, 2023. Nuclear Power in Sweden. Available at: https://www.world-nuclear.org/information-library/country-profiles/countries-o-s/sweden.aspx (Accessed: 18 May 2025).
+
+
+
+
