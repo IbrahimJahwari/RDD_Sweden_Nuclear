@@ -29,7 +29,6 @@ On June 1, 2023, Sweden formally reclassified nuclear energy as a "fossil-free" 
 1. Refer to `data/README.md` for instructions on accessing the raw datasets from the ENTSO-E Transparency Platform.
 2. Run `Extra_Sweden_RDD.R` to clean and merge the raw files.
 3. Use `Sweden_RDD.R` or knit `Sweden_RDD.Rmd` to reproduce the analysis and results.
-4. Outputs will be saved to the `output/` directory.
 
 ## Software Requirements
 
