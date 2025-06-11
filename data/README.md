@@ -26,7 +26,7 @@ This should result in a total of **12 CSV files** (4 areas × 3 years), each con
 
 Once all files are downloaded, run the script: code/`Extra_Sweden_RDD.R`
 
-This script processes the raw hourly data and produces the composite daily dataset used in the main analysis. The data transformation steps are primarily located in lines 1–150 of the script. The resulting output is used by `Sweden_RDD.R` and `Sweden_RDD.Rmd` to generate all tables and figures.
+This script processes the raw hourly data and produces the composite daily dataset used in the main analysis. The data transformation steps are primarily located in lines 1–150 of the script. The resulting output is used by `Sweden_RDD.R` and `Sweden_RDD.Rmd` to generate all tables and figures. Ensure libraries are loaded. Remeber to adjust filepaths as needed. 
 
 
 
