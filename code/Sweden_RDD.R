@@ -12,7 +12,7 @@ library(patchwork)
 
 #this uses the aggregated compiled dataset (Sweden_RDD.csv") that was constructed in the "Extra_Sweden_RDD.R" file. Refer to that if needed. 
 # (adjust working directory and filepath as needed)
-setwd("~/Desktop/EDS/group")
+setwd("~/filepath")
 sweden_rdd <- read.csv("Sweden_RDD.csv")
 
 # Convert Date to Date object and add time variables
