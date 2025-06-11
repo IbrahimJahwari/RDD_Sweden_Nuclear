@@ -4,6 +4,10 @@ This repository contains code and documentation for a research project examining
 
 **See the output file for the full PDF report.** 
 
+## Description
+
+On June 1, 2023, Sweden formally reclassified nuclear energy as a "fossil-free" source under its climate and energy framework. This project evaluates whether that change was associated with a measurable shift in daily nuclear electricity generation. The analysis relies on high-frequency generation data and applies a sharp RDD centered on the policy date.
+
 ## Repository Structure
 ```
 RDD_Sweden_Nuclear/
@@ -22,10 +26,6 @@ RDD_Sweden_Nuclear/
 └── README.md                  # Project overview and reproduction instructions
 ```
 
-## Description
-
-On June 1, 2023, Sweden formally reclassified nuclear energy as a "fossil-free" source under its climate and energy framework. This project evaluates whether that change was associated with a measurable shift in daily nuclear electricity generation. The analysis relies on high-frequency generation data and applies a sharp RDD centered on the policy date.
-
 ## How to Reproduce
 
 1. Refer to `data/README.md` for instructions on accessing the raw datasets from the ENTSO-E Transparency Platform.
@@ -34,15 +34,7 @@ On June 1, 2023, Sweden formally reclassified nuclear energy as a "fossil-free" 
 
 ## Software Requirements
 
-This project uses R (version 4.0 or later) and the following R packages:
-- `rdrobust`
-- `rddensity`
-- `fixest`
-- `dplyr`
-- `ggplot2`
-- `lubridate`
-- `readr`
-- `tidyr`
+This project uses R (version 4.0 or later) and the following R packages: `rdrobust`, `rddensity`, `fixest`, `dplyr`, `ggplot2`, `lubridate`, `readr`,`tidyr`
 
 ## License
 
