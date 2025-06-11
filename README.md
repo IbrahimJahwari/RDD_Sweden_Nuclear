@@ -2,19 +2,20 @@
 
 This repository contains code and documentation for a research project examining the effect of Sweden’s 2023 nuclear reclassification on electricity production. The analysis uses a regression discontinuity design (RDD) to estimate the short-run impact on nuclear output.
 
-## Repository Structure
 RDD_Sweden_Nuclear/
 ├── code/
-│ ├── Sweden_RDD.Rmd # Main R Markdown report
-│ ├── Sweden_RDD.R # Analysis script
-│ └── Extra_Sweden_RDD.R # Data processing script
+│   ├── Sweden_RDD.Rmd         # Main report with code, results, and text (knit to PDF/HTML)
+│   ├── Sweden_RDD.R           # Standalone R script version of the analysis
+│   └── Extra_Sweden_RDD.R     # Script to clean and transform raw data
+│
 ├── data/
-│ └── README.md # Instructions for obtaining raw data
+│   └── README.md              # Instructions for downloading raw datasets from the source
+│
 ├── output/
-│ ├── Sweden_RDD.pdf # Knitted PDF report
-│ └── Sweden_RDD.html # Knitted HTML report
-├── LICENSE # MIT license
-└── README.md # Project overview and usage
+│   └── Sweden_RDD.pdf         # Final PDF version of the report
+│
+├── LICENSE                    # MIT License governing reuse and distribution
+└── README.md                  # Overview of the project and instructions for reproduction
 
 ## Description
 
