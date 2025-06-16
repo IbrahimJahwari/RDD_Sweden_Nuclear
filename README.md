@@ -1,4 +1,4 @@
-# RDD_Sweden_Nuclear
+# Sweden's Nuclear Energy Production
 
 This repository contains code and documentation for a research project examining the effect of Sweden’s 2023 nuclear reclassification on electricity production. The analysis uses a regression discontinuity design (RDD) to estimate the short-run impact on nuclear output.
 
