@@ -4,6 +4,8 @@ This repository contains code and documentation for a research project examining
 
 **See the output file for the full PDF report.** 
 
+This report is a more academic, formal, journal-style most suitable for readers with a good foundation in econometric methods. 
+
 ## Description
 
 On June 1, 2023, Sweden formally reclassified nuclear energy as a "fossil-free" source under its climate and energy framework. This project evaluates whether that change was associated with a measurable shift in daily nuclear electricity generation. The analysis relies on high-frequency generation data and applies a sharp RDD centered on the policy date.
