@@ -38,6 +38,10 @@ RDD_Sweden_Nuclear/
 
 This project uses R (version 4.0 or later) and the following R packages: `rdrobust`, `rddensity`, `fixest`, `dplyr`, `ggplot2`, `lubridate`, `readr`,`tidyr`
 
+## Potential Improvements
+
+Looking back, a central issue was the assumption that the policy would have an immediate effect on nuclear electricity output. In reality, its impact is more plausibly felt through investment decisions, affecting capacity over the long run rather than short-run production. This weakens the case for using a regression discontinuity design, especially with time as the running variable. A difference-in-differences (DiD) approach, perhaps using a country like Finland as a control, would likely have been more appropriate. It would better match the policy’s timeline and help account for confounding seasonal and weather-related variation in electricity generation.
+
 ## License
 
 This project is released under the MIT License. See the `LICENSE` file for details.
